@@ -21,7 +21,6 @@ class mapVC: UIViewController {
         let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: latitudinalMeters, longitudinalMeters: longitudinalMeters)
         self.map.setRegion(region, animated: false) // Set to yes to animate, you said initial load so I image this won't be visible anyways.
 
-
         let annotation = MKPointAnnotation()
         annotation.coordinate = CLLocationCoordinate2D(latitude: 40.291390, longitude: -74.246360)
         map.addAnnotation(annotation)

@@ -2,19 +2,18 @@ from flask import Flask
 from flask import request
 import pymysql
 
-
 app = Flask(__name__)
 
+# default app route
 @app.route("/")
 def home():
     args = request.args
 
+    # connect to database
     db = pymysql.connect("localhost","root","parWONE123","edd_server" )
     cursor = db.cursor()
 
-    
-
-    if len(args) > 0:
+    if len(args) > 0: # runs if request contains data
         if args["usage"] == "input":
             newDistance = args["distance"]
             sql = "insert into `data` (`distance`) values (" + newDistance  + ");"
@@ -48,4 +47,4 @@ def home():
         return str(returnArray[-1])
     
 if __name__ == "__main__":
-    app.run(debug=False, host='192.168.87.188', port=5000)
+    app.run(debug=False, host='192.168.87.188', port=5000) # start server with specified IP/port

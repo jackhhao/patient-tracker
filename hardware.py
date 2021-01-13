@@ -1,13 +1,12 @@
-
 import smbus
 import time
 import requests
 
-# Define some device parameters
+# Define device parameters
 I2C_ADDR  = 0x27 # I2C device address
 LCD_WIDTH = 16   # Maximum characters per line
 
-# Define some device constants
+# Define device constants
 LCD_CHR = 1 # Mode - Sending data
 LCD_CMD = 0 # Mode - Sending command
 
@@ -25,14 +24,13 @@ ENABLE = 0b00000100 # Enable bit
 E_PULSE = 0.0005
 E_DELAY = 0.0005
 
-#Open I2C interface
-#bus = smbus.SMBus(0)  # Rev 1 Pi uses 0
+# Open I2C interface
 bus = smbus.SMBus(1) # Rev 2 Pi uses 1
 
 def lcd_init():
-    # Initialise display
-    lcd_byte(0x33,LCD_CMD) # 110011 Initialise
-    lcd_byte(0x32,LCD_CMD) # 110010 Initialise
+    # Initialize display
+    lcd_byte(0x33,LCD_CMD) # 110011 Initialize
+    lcd_byte(0x32,LCD_CMD) # 110010 Initialize
     lcd_byte(0x06,LCD_CMD) # 000110 Cursor move direction
     lcd_byte(0x0C,LCD_CMD) # 001100 Display On,Cursor Off, Blink Off 
     lcd_byte(0x28,LCD_CMD) # 101000 Data length, number of lines, font size
@@ -56,7 +54,7 @@ def lcd_byte(bits, mode):
     bus.write_byte(I2C_ADDR, bits_low)
     lcd_toggle_enable(bits_low)
 
-    def lcd_toggle_enable(bits):
+def lcd_toggle_enable(bits):
     # Toggle enable
     time.sleep(E_DELAY)
     bus.write_byte(I2C_ADDR, (bits | ENABLE))
@@ -64,7 +62,7 @@ def lcd_byte(bits, mode):
     bus.write_byte(I2C_ADDR,(bits & ~ENABLE))
     time.sleep(E_DELAY)
 
-def lcd_string(message,line):
+def lcd_string(message, line):
     # Send string to display
 
     message = message.ljust(LCD_WIDTH," ")
@@ -74,25 +72,24 @@ def lcd_string(message,line):
     for i in range(LCD_WIDTH):
         lcd_byte(ord(message[i]),LCD_CHR)
 
-    def main():
-    # Main program block
-
-    # Initialise display
+# Main program block
+def main():
+    # Initialize display
     lcd_init()
 
     while True:
+        response = str(requests.get("http://192.168.87.188:5000/").text) # fetch request from app
 
-        response = str(requests.get("http://192.168.87.188:5000/").text))
-
-        if response != "0":
+        if response != "0": # if user is within bounds, return distance to boundary
             lcd_string("Distance = " + response + "         <",LCD_LINE_1)
             lcd_string("Within Bounds          <",LCD_LINE_2)
-        else:
+        else: # warn user out of bounds
             lcd_string("Warning!          <",LCD_LINE_1)
             lcd_string("Outside Bounds          <",LCD_LINE_2)
             
         time.sleep(3)
 
+# fetches GPS data
 def getPositionData(gps):
 	nx = gpsd.next()
 	if nx['class'] == 'TPV':
@@ -105,4 +102,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     finally:
-        lcd_byte(0x01, LCD_CMD)
+        lcd_byte(0x01, LCD_CMD) # displays text on screen

@@ -49,11 +49,9 @@ class ViewController: UIViewController {
                     }
                 }
                 task.resume()
-            } catch {
-                
+            } catch {   
                 print(error)
             }
         }
     
 }
-
