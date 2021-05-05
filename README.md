@@ -1,1 +1,2 @@
-# patient-tracker
+# Patient Patrol
+Wearable device to monitor locations of nursing home patients and alert caretakers if they leave the premises. Consists of an armband with a Raspberry Pi and GPS module capable of transmitting live location data wirelessly to backend Python server. Using a mobile administrative app, the caretaker can create a virtual geofence to set custom boundaries for their patients. An LCD screen attached to the patient's armband displays their current distance to the boundary. If the patient crosses the border, a warning will be shown on the screen, and their caretaker will be notified.
